@@ -420,7 +420,7 @@ oper_func stoneneedle_show_list = {
 	stoneneedle_read_seq_bytes_chunk_show,	/*"READ_SEQUETIAL_BYTES_PER_CHUNK:", */
 	stoneneedle_write_count_chunk_show,	/*"WRITE_COUNT_PER_CHUNK:", */
 	stoneneedle_read_count_chunk_show,	/*"READ_COUNT_PER_CHUNK:", */
-	stoneneedle_fs_superblock_per_chunk_show,	/*"WRITE_FS_SUPERBLOCK_PER_CHUNK:", */
+	stoneneedle_write_fs_superblock_chunk_show,	/*"WRITE_FS_SUPERBLOCK_PER_CHUNK:", */
 };
 
 static int stoneneedle_show(struct seq_file *m, void *arg)
@@ -1004,7 +1004,7 @@ static int alloc_dev_data(struct stoneneedle_data *io_data, sector_t dev_capacit
 	io_data->write_fs_superblock_per_chunk =
 	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
 		    GFP_ATOMIC);
-	if (!io_data->write_superblock_per_chunk)
+	if (!io_data->write_fs_superblock_per_chunk)
 		goto free_read_count_per_chunk;
 	
 
