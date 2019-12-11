@@ -68,6 +68,7 @@ enum stoneneedle_index_item {
 	STONENEEDLE_READ_COUNT_PER_CHUNK,
 	/* add other paramter here */
 	STONENEEDLE_MAX,
+	STONENEEDLE_WRITE_FS_SUPERBLOCK_PER_CHUNK,
 };
 
 const char *const device_status[] = { "stop", "start" };
@@ -101,6 +102,7 @@ const char *const stoneneedle_text[] = {
 	"READ_SEQUENTIAL_BYTES_PER_CHUNK:",
 	"WRITE_COUNT_PER_CHUNK:",
 	"READ_COUNT_PER_CHUNK:",
+	"WRITE_FS_SUPERBLOCK_PER_CHUNK:",
 };
 
 struct histlog2 {
@@ -122,7 +124,7 @@ struct stoneneedle_data {
 	unsigned long *read_seq_bytes_per_chunk;
 	unsigned long *write_count_per_chunk;
 	unsigned long *read_count_per_chunk;
-	unsigned long *write_fs_superblock_chunk;	// Hoyoung: add inode count params
+	unsigned long *write_fs_superblock_per_chunk;	// Hoyoung: add inode count params
 	sector_t bucket_size;
 	spinlock_t lock;
 };
@@ -370,6 +372,17 @@ static int stoneneedle_write_count_chunk_show(struct seq_file *m, int offset,
 	return 0;
 }
 
+/* Hoyoung Add */
+static int stoneneedle_write_fs_superblock_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_fs_superblock_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
 static int stoneneedle_common_show(struct seq_file *m, int offset,
 				 struct stoneneedle_data *io_data)
 {
@@ -407,6 +420,7 @@ oper_func stoneneedle_show_list = {
 	stoneneedle_read_seq_bytes_chunk_show,	/*"READ_SEQUETIAL_BYTES_PER_CHUNK:", */
 	stoneneedle_write_count_chunk_show,	/*"WRITE_COUNT_PER_CHUNK:", */
 	stoneneedle_read_count_chunk_show,	/*"READ_COUNT_PER_CHUNK:", */
+	stoneneedle_fs_superblock_per_chunk_show,	/*"WRITE_FS_SUPERBLOCK_PER_CHUNK:", */
 };
 
 static int stoneneedle_show(struct seq_file *m, void *arg)
