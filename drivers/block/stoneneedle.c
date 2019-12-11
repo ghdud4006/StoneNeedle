@@ -122,6 +122,7 @@ struct stoneneedle_data {
 	unsigned long *read_seq_bytes_per_chunk;
 	unsigned long *write_count_per_chunk;
 	unsigned long *read_count_per_chunk;
+	unsigned long *write_fs_superblock_chunk;	// Hoyoung: add inode count params
 	sector_t bucket_size;
 	spinlock_t lock;
 };
@@ -479,6 +480,9 @@ static void stoneneedle_dev_data_clear(struct stoneneedle_dev *sn_dev)
 	       sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size);
 	memset(sn_dev->dev_data.write_count_per_chunk, 0,
 	       sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size);
+	/* Hoyoung Add */
+	memset(sn_dev->dev_data.write_fs_superblock_per_chunk, 0 , 
+	       sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size);
 	return;
 }
 
@@ -724,6 +728,7 @@ static unsigned int calc_chunk_index(unsigned int index)
 	return index;
 }
 
+/* Hoyoung: function start point*/
 static void calc_write_stoneneedle(struct bio *bio, struct nvme_command cmnd,
 				 struct stoneneedle_dev *sn_dev)
 {
@@ -751,6 +756,11 @@ static void calc_write_stoneneedle(struct bio *bio, struct nvme_command cmnd,
 	io_data->stoneneedle_value[STONENEEDLE_TOTAL_WRITE_BYTES] += rq_bytes;
 	calc_bucket_account(io_data->write_count_per_chunk, bio,
 			    io_data->bucket_size);
+
+	/* Hoyoung Add */
+	calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+
 	spin_unlock(&sn_dev->dev_data.lock);
 
 	calc_io_arrival_interval(sn_dev, STONENEEDLE_WRITE);
@@ -936,8 +946,20 @@ static int alloc_dev_data(struct stoneneedle_data *io_data, sector_t dev_capacit
 		    GFP_ATOMIC);
 	if (!io_data->read_count_per_chunk)
 		goto free_write_count_per_chunk;
+	
+	/* Hoyoung Add */
+	io_data->write_fs_superblock_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_superblock_per_chunk)
+		goto free_read_count_per_chunk;
+	
+
 	return 0;
 
+/*Hoyoung Add*/
+free_read_count_per_chunk:
+	kfree(io_data->read_count_per_chunk);
 free_write_count_per_chunk:
 	kfree(io_data->write_count_per_chunk);
 free_read_seq_bytes_per_chunk:
@@ -1085,6 +1107,9 @@ void release_stoneneedle(const char *dev_name)
 
 	if (io_data->write_count_per_chunk)
 		kfree(io_data->write_count_per_chunk);
+
+	if (io_data->write_fs_superblock_per_chunk)
+		kfree(io_data->write_fs_superblock_per_chunk);
 
 	list_del(&sn_dev->list);
 	kfree(sn_dev);
