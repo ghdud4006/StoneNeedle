@@ -771,10 +771,49 @@ static void calc_write_stoneneedle(struct bio *bio, struct nvme_command cmnd,
 	calc_bucket_account(io_data->write_count_per_chunk, bio,
 			    io_data->bucket_size);
 
-	/* Hoyoung Add */
-	calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
-			    io_data->bucket_size);
+	/* Hoyoung: Classify bio->fs_component_type by Ext4 component*/
 
+	/* super block */
+	if (bio->fs_component_type == 0)
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* group descriptor */
+	else if (bio->fs_component_type == 1) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);	
+	/* block bitmap */
+	else if (bio->fs_component_type == 2) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* inode bitmap */
+	else if (bio->fs_component_type == 3) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* regular file inode */
+	else if (bio->fs_component_type == 4) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* directory inode */
+	else if (bio->fs_component_type == 5) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* regular file data block */
+	else if (bio->fs_component_type == 6) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* directory data block */
+	else if (bio->fs_component_type == 7) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* journal data */
+	else if (bio->fs_component_type == 8) 
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+	/* undefined */
+	else  
+		calc_bucket_account(io_data->write_fs_superblock_per_chunk, bio,
+			    io_data->bucket_size);
+		
 	spin_unlock(&sn_dev->dev_data.lock);
 
 	calc_io_arrival_interval(sn_dev, STONENEEDLE_WRITE);
