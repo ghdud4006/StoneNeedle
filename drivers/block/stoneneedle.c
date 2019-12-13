@@ -68,7 +68,15 @@ enum stoneneedle_index_item {
 	STONENEEDLE_READ_COUNT_PER_CHUNK,
 	/* add other paramter here */
 	STONENEEDLE_MAX,
-	STONENEEDLE_WRITE_FS_SUPERBLOCK_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_SB_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_GDESC_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_B_BMAP_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_I_BMAP_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_R_INODE_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_D_INODE_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_R_BLOCK_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_D_BLOCK_PER_CHUNK,
+	STONENEEDLE_WRITE_EXT4_JOURNAL_PER_CHUNK,
 };
 
 const char *const device_status[] = { "stop", "start" };
@@ -102,7 +110,15 @@ const char *const stoneneedle_text[] = {
 	"READ_SEQUENTIAL_BYTES_PER_CHUNK:",
 	"WRITE_COUNT_PER_CHUNK:",
 	"READ_COUNT_PER_CHUNK:",
-	"WRITE_FS_SUPERBLOCK_PER_CHUNK:",
+	"WRITE_EXT4_SB_PER_CHUNK:",
+	"WRITE_EXT4_GDESC_PER_CHUNK:",
+	"WRITE_EXT4_B_BMAP_PER_CHUNK:",
+	"WRITE_EXT4_I_BMAP_PER_CHUNK:",
+	"WRITE_EXT4_R_INODE_PER_CHUNK:",
+	"WRITE_EXT4_D_INODE_PER_CHUNK:",
+	"WRITE_EXT4_R_BLOCK_PER_CHUNK:",
+	"WRITE_EXT4_D_BLOCK_PER_CHUNK:",
+	"WRITE_EXT4_JOURNAL_PER_CHUNK:",
 };
 
 struct histlog2 {
@@ -124,7 +140,15 @@ struct stoneneedle_data {
 	unsigned long *read_seq_bytes_per_chunk;
 	unsigned long *write_count_per_chunk;
 	unsigned long *read_count_per_chunk;
-	unsigned long *write_ext4_sb_per_chunk;	// Hoyoung: add inode count params
+	unsigned long *write_ext4_sb_per_chunk;	
+	unsigned long *write_ext4_gdesc_per_chunk;	
+	unsigned long *write_ext4_b_bmap_per_chunk;	
+	unsigned long *write_ext4_i_bmap_per_chunk;	
+	unsigned long *write_ext4_r_inode_per_chunk;	
+	unsigned long *write_ext4_d_inode_per_chunk;	
+	unsigned long *write_ext4_r_block_per_chunk;	
+	unsigned long *write_ext4_d_block_per_chunk;	
+	unsigned long *write_ext4_journal_per_chunk;	
 	sector_t bucket_size;
 	spinlock_t lock;
 };
@@ -383,6 +407,86 @@ static int stoneneedle_write_ext4_sb_chunk_show(struct seq_file *m, int offset,
 	return 0;
 }
 
+static int stoneneedle_write_ext4_gdesc_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_gdesc_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_b_bmap_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_b_bmap_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_i_bmap_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_i_bmap_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_r_inode_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_r_inode_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_d_inode_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_d_inode_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_r_block_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_r_block_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_d_block_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_d_block_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
+static int stoneneedle_write_ext4_journal_chunk_show(struct seq_file *m, int offset,
+					    	    struct stoneneedle_data *io_data)
+{
+	seq_printf(m, "%s ", stoneneedle_text[offset]);
+	stoneneedle_row_show(m, io_data->write_ext4_journal_per_chunk,
+			   dev_mgmt->stoneneedle_chunk_size);
+
+	return 0;
+}
+
 static int stoneneedle_common_show(struct seq_file *m, int offset,
 				 struct stoneneedle_data *io_data)
 {
@@ -420,7 +524,15 @@ oper_func stoneneedle_show_list = {
 	stoneneedle_read_seq_bytes_chunk_show,	/*"READ_SEQUETIAL_BYTES_PER_CHUNK:", */
 	stoneneedle_write_count_chunk_show,	/*"WRITE_COUNT_PER_CHUNK:", */
 	stoneneedle_read_count_chunk_show,	/*"READ_COUNT_PER_CHUNK:", */
-	stoneneedle_write_ext4_sb_chunk_show,	/*"WRITE_FS_SUPERBLOCK_PER_CHUNK:", */
+	stoneneedle_write_ext4_sb_chunk_show,	/*"WRITE_EXT4_SB_PER_CHUNK:", */
+	stoneneedle_write_ext4_gdesc_chunk_show,	/*"WRITE_EXT4_GDESC_PER_CHUNK:", */
+	stoneneedle_write_ext4_b_bmap_chunk_show,	/*"WRITE_EXT4_B_BMAP_PER_CHUNK:", */
+	stoneneedle_write_ext4_i_bmap_chunk_show,	/*"WRITE_EXT4_I_BMAP_PER_CHUNK:", */
+	stoneneedle_write_ext4_r_inode_chunk_show,	/*"WRITE_EXT4_R_INODE_PER_CHUNK:", */
+	stoneneedle_write_ext4_d_inode_chunk_show,	/*"WRITE_EXT4_D_INODE_PER_CHUNK:", */
+	stoneneedle_write_ext4_r_block_chunk_show,	/*"WRITE_EXT4_R_BLOCK_PER_CHUNK:", */
+	stoneneedle_write_ext4_d_block_chunk_show,	/*"WRITE_EXT4_D_BLOCK_PER_CHUNK:", */
+	stoneneedle_write_ext4_journal_chunk_show,	/*"WRITE_EXT4_JOURNAL_PER_CHUNK:", */
 };
 
 static int stoneneedle_show(struct seq_file *m, void *arg)
@@ -774,45 +886,44 @@ static void calc_write_stoneneedle(struct bio *bio, struct nvme_command cmnd,
 	/* Hoyoung: Classify bio->fs_component_type by Ext4 component*/
 
 	/* super block */
-	if (bio->fs_component_type == 0)
+	if (bio->ext4_type_for_stoneneedle == 0)
 		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
 			    io_data->bucket_size);
 	/* group descriptor */
-	else if (bio->fs_component_type == 1) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 1) 
+		calc_bucket_account(io_data->write_ext4_gdesc_per_chunk, bio,   ////////////////////point
 			    io_data->bucket_size);	
 	/* block bitmap */
-	else if (bio->fs_component_type == 2) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 2) 
+		calc_bucket_account(io_data->write_ext4_b_bmap_per_chunk, bio,
 			    io_data->bucket_size);
 	/* inode bitmap */
-	else if (bio->fs_component_type == 3) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 3) 
+		calc_bucket_account(io_data->write_ext4_i_bmap_per_chunk, bio,
 			    io_data->bucket_size);
 	/* regular file inode */
-	else if (bio->fs_component_type == 4) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 4) 
+		calc_bucket_account(io_data->write_ext4_r_inode_per_chunk, bio,
 			    io_data->bucket_size);
 	/* directory inode */
-	else if (bio->fs_component_type == 5) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 5) 
+		calc_bucket_account(io_data->write_ext4_d_inode_per_chunk, bio,
 			    io_data->bucket_size);
 	/* regular file data block */
-	else if (bio->fs_component_type == 6) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 6) 
+		calc_bucket_account(io_data->write_ext4_r_block_per_chunk, bio,
 			    io_data->bucket_size);
 	/* directory data block */
-	else if (bio->fs_component_type == 7) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 7) 
+		calc_bucket_account(io_data->write_ext4_d_block_per_chunk, bio,
 			    io_data->bucket_size);
 	/* journal data */
-	else if (bio->fs_component_type == 8) 
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
+	else if (bio->ext4_type_for_stoneneedle == 8) 
+		calc_bucket_account(io_data->write_ext4_journal_per_chunk, bio,
 			    io_data->bucket_size);
 	/* undefined */
 	else  
-		calc_bucket_account(io_data->write_ext4_sb_per_chunk, bio,
-			    io_data->bucket_size);
+		printk("stoneneedle: bio that has no defined ext4 type\n");
 		
 	spin_unlock(&sn_dev->dev_data.lock);
 
@@ -1000,17 +1111,87 @@ static int alloc_dev_data(struct stoneneedle_data *io_data, sector_t dev_capacit
 	if (!io_data->read_count_per_chunk)
 		goto free_write_count_per_chunk;
 	
-	/* Hoyoung Add */
+	/* superblock */
 	io_data->write_ext4_sb_per_chunk =
 	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
 		    GFP_ATOMIC);
 	if (!io_data->write_ext4_sb_per_chunk)
 		goto free_read_count_per_chunk;
-	
 
+	/* group descriptor */
+	io_data->write_ext4_gdesc_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_gdesc_per_chunk)
+		goto free_write_ext4_sb_per_chunk;
+
+	/* block bitmap */
+	io_data->write_ext4_b_bmap_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_b_bmap_per_chunk)
+		goto free_write_ext4_gdesc_per_chunk;
+
+	/* inode bitmap */
+	io_data->write_ext4_i_bmap_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_i_bmap_per_chunk)
+		goto free_write_ext4_b_bmap_per_chunk;
+	
+	/* regular inode */
+	io_data->write_ext4_r_inode_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_r_inode_per_chunk)
+		goto free_write_ext4_i_bmap_per_chunk;
+
+	/* directory inode */
+	io_data->write_ext4_d_inode_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_d_inode_per_chunk)
+		goto free_write_ext4_r_inode_per_chunk;	
+	
+	/* regular data block */
+	io_data->write_ext4_r_block_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_r_block_per_chunk)
+		goto free_write_ext4_d_inode_per_chunk;
+	
+	/* directory data block */
+	io_data->write_ext4_d_block_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_d_block_per_chunk)
+		goto free_write_ext4_r_block_per_chunk;
+	
+	/* journal */
+	io_data->write_ext4_journal_per_chunk =
+	    kzalloc(sizeof(unsigned long) * dev_mgmt->stoneneedle_chunk_size,
+		    GFP_ATOMIC);
+	if (!io_data->write_ext4_journal_per_chunk)
+		goto free_write_ext4_d_block_per_chunk;
+	
 	return 0;
 
-/*Hoyoung Add*/
+free_write_ext4_d_block_per_chunk:
+	kfree(io_data->write_ext4_d_block_per_chunk);
+free_write_ext4_r_block_per_chunk:
+	kfree(io_data->write_ext4_r_block_per_chunk);
+free_write_ext4_d_inode_per_chunk:
+	kfree(io_data->write_ext4_d_inode_per_chunk);
+free_write_ext4_r_inode_per_chunk:
+	kfree(io_data->write_ext4_r_inode_per_chunk);
+free_write_ext4_i_bmap_per_chunk:
+	kfree(io_data->write_ext4_i_bmap_per_chunk);
+free_write_ext4_b_bmap_per_chunk:
+	kfree(io_data->write_ext4_b_bmap_per_chunk);
+free_write_ext4_gdesc_per_chunk:
+	kfree(io_data->write_ext4_gdesc_per_chunk);
+free_write_ext4_sb_per_chunk:
+	kfree(io_data->write_ext4_sb_per_chunk);
 free_read_count_per_chunk:
 	kfree(io_data->read_count_per_chunk);
 free_write_count_per_chunk:
